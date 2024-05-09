@@ -7,6 +7,7 @@ class ContactModel {
   String website;
   String image;
   String company;
+  String designation;
   bool favorite;
 
   ContactModel({
@@ -18,6 +19,7 @@ class ContactModel {
     this.website = "",
     this.image = "images/person.png",
     this.company = "",
-    this.favorite = false
+    this.favorite = false,
+    this.designation = ""
   });
 }

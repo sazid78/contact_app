@@ -21,8 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),
-        onPressed: (){
-        Navigator.pushNamed(context, ContactFormScreen.routeName);
+        onPressed: () {
+         Navigator.pushNamed(context, ContactFormScreen.routeName).then((value) => {
+           setState(() {
+
+           })
+         });
+
       },child:  Icon(Icons.add,color: Colors.white,),),
         appBar: AppBar(
           title: Text(
