@@ -1,11 +1,13 @@
-import 'package:contact_app/db/temp_db.dart';
+import 'package:contact_app/db/db_helper.dart';
 import 'package:contact_app/models/contact_model.dart';
+import 'package:contact_app/provider/contact_provider.dart';
+import 'package:contact_app/utils/helper_function.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ContactFormScreen extends StatefulWidget {
-
   static const String routeName = '/contact_form';
-   ContactFormScreen({super.key});
+  ContactFormScreen({super.key});
 
   @override
   State<ContactFormScreen> createState() => _ContactFormScreenState();
@@ -20,36 +22,36 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
   final _addressTEcontroller = TextEditingController();
   final _webTEcontroller = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("New Contact"),
-        backgroundColor: Colors.orange,
-      ),
-      body: Form(
-        key: _formKey,
+        appBar: AppBar(
+          title: const Text("New Contact"),
+          backgroundColor: Colors.orange,
+        ),
+        body: Form(
+          key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               TextFormField(
-                validator: (value){
-                  if(value == null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "Enter your name";
                   }
                   return null;
                 },
                 controller: _nameTEcontroller,
                 decoration: const InputDecoration(
-                  hintText: "Your Name",
-                  prefixIcon: Icon(Icons.person)
-                ),
+                    hintText: "Your Name", prefixIcon: Icon(Icons.person)),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
-                validator: (value){
-                  if(value == null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "Enter your mobile number";
                   }
                   return null;
@@ -57,80 +59,89 @@ class _ContactFormScreenState extends State<ContactFormScreen> {
                 keyboardType: TextInputType.number,
                 controller: _mobileTEcontroller,
                 decoration: const InputDecoration(
-                    hintText: "Your mobile",
-                    prefixIcon: Icon(Icons.call)
-                ),
+                    hintText: "Your mobile", prefixIcon: Icon(Icons.call)),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: _emailTEcontroller,
                 decoration: const InputDecoration(
-                    hintText: "Your email",
-                    prefixIcon: Icon(Icons.email)
-                ),
+                    hintText: "Your email", prefixIcon: Icon(Icons.email)),
                 keyboardType: TextInputType.emailAddress,
               ),
-
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: _designationTEcontroller,
                 decoration: const InputDecoration(
                     hintText: "Your designation",
-                    prefixIcon: Icon(Icons.bookmark)
-                ),
+                    prefixIcon: Icon(Icons.bookmark)),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: _addressTEcontroller,
                 decoration: const InputDecoration(
                     hintText: "Your Address",
-                    prefixIcon: Icon(Icons.location_on)
-                ),
+                    prefixIcon: Icon(Icons.location_on)),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: _webTEcontroller,
                 decoration: const InputDecoration(
-                    hintText: "Your website",
-                    prefixIcon: Icon(Icons.web)
-                ),
+                    hintText: "Your website", prefixIcon: Icon(Icons.web)),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: _companyTEcontroller,
                 decoration: const InputDecoration(
                     hintText: "Your Company",
-                    prefixIcon: Icon(Icons.construction)
-                ),
+                    prefixIcon: Icon(Icons.construction)),
               ),
-              const SizedBox(height: 40,),
+              const SizedBox(
+                height: 40,
+              ),
               SizedBox(
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white
-                  ),
-                  onPressed: (){
-                    if(_formKey.currentState!.validate()){
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
                       final contact = ContactModel(
-                        id: contactList.length + 1,
                           contactName: _nameTEcontroller.text,
                           mobile: _mobileTEcontroller.text,
-                        address: _addressTEcontroller.text,
-                        website: _webTEcontroller.text,
-                        designation: _designationTEcontroller.text,
-                        company: _companyTEcontroller.text
-                      );
-                      contactList.add(contact);
-                      Navigator.pop(context);
+                          address: _addressTEcontroller.text,
+                          website: _webTEcontroller.text,
+                          designation: _designationTEcontroller.text,
+                          company: _companyTEcontroller.text);
+                      // contactList.add(contact);
+                      Provider.of<ContactProvider>(context, listen: false).insert(contact).then((newRowId) {
+                        if(newRowId > 0){
+                          showMsg(context, "Saved Successfully");
+                          Navigator.pop(context);
+                        }
+                      }).catchError((error){
+                        showMsg(context, "Failed to save");
+                      });
                     }
-                }, child: const Text("Save"),),
+                  },
+                  child: const Text("Save"),
+                ),
               )
             ],
-      ),)
-    );
+          ),
+        ));
   }
+
   @override
   void dispose() {
     _nameTEcontroller.dispose();
